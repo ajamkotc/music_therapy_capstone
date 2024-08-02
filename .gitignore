@@ -1,6 +1,9 @@
 # Data
 /data/
 
+# Kaggle login info
+/kaggle.json
+
 # Mac OS-specific storage files
 .DS_Store
 
