@@ -168,13 +168,13 @@ class SpotifyMachine:
             
         data_df = pd.DataFrame.from_dict(data)
 
-        self.save_data(data_df, genre)
+        self.__save_data(data_df, genre)
         
         # Convert list of dicts to pandas DataFrame
         return data_df
 
     @staticmethod
-    def save_data(data, genre):
+    def __save_data(data, genre):
         """Save DataFrame as .csv file in raw folder.
         
         Params:
@@ -184,9 +184,3 @@ class SpotifyMachine:
 
         datapath = f"../data/raw/{genre}.csv"
         data.to_csv(datapath, index=False)
-
-if __name__ == '__main__':
-    genre = input('Genre: ')
-
-    new_machine = SpotifyMachine()
-    new_machine.gen_genre_df(genre)
