@@ -82,7 +82,10 @@ class SpotifyMachine:
 
         r = requests.get(url=url, params=params, headers=headers)
 
-        return r.json()
+        if len(r.json()['playlists']['items']) > 0:
+            return r.json()
+        else:
+            raise IndexError
 
     def get_tracks(self, playlist_url):
         """Gets list of top 50 tracks from the playlist_url.
@@ -148,10 +151,12 @@ class SpotifyMachine:
         Returns
             Dataframe containing audio features of 50 songs in top playlist of 'genre'"""
 
-        # Get top playlist for genre
-        playlist_json = self.search_for_playlist(genre)
-
-        # Extract playlist url for api call
+        try:
+            # Get top playlist for genre
+            playlist_json = self.search_for_playlist(genre)
+        except IndexError:
+            playlist_json = self.search_for_playlist(genre.lower())
+        
         url = playlist_json['playlists']['items'][0]['tracks']['href']
         
         # Get list of tracks
