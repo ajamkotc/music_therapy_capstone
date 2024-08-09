@@ -139,7 +139,9 @@ class SpotifyMachine:
         headers = {'Authorization':self.gen_header()}
 
         r = requests.get(url=url, headers=headers)
+        
         return r.json()
+    
 
     def gen_genre_df(self, genre):
         """Generate pandas DataFrame containing audio features of 50 songs in specified genre.
@@ -169,7 +171,7 @@ class SpotifyMachine:
         data = []
         
         for track in track_urls:
-            data.append(self.get_track_features(track))\
+            data.append(self.get_track_features(track))
             
         data_df = pd.DataFrame.from_dict(data)
 
@@ -189,3 +191,8 @@ class SpotifyMachine:
 
         datapath = f"../data/raw/{genre}.csv"
         data.to_csv(datapath, index=False)
+        
+if __name__ == '__main__':
+    spotify_machine = SpotifyMachine()
+
+    spotify_machine.gen_genre_df('Jazz')
