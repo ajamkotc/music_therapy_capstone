@@ -28,12 +28,12 @@ class SpotifyMachine:
         gen_genre_def(genre):
             Generate pandas DataFrame containing audio features of 50 songs in specified genre.
         """
-    
+
     # Extract CLIENT_ID and CLIENT_SECRET from local .env file
     load_dotenv()
     CLIENT_ID = os.getenv('CLIENT_ID')
     CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-    
+
     def gen_header(self):
         """Generates authorization header for API calls.
         
@@ -96,7 +96,7 @@ class SpotifyMachine:
         Returns:
             Dictionary containing the Spotify Track ID of each track
         """
-        
+
         url = playlist_url
         headers = {'Authorization':self.gen_header()}
         params = {
@@ -116,9 +116,9 @@ class SpotifyMachine:
         Returns
             track_urls (list) -- List of track urls
         """
-        
+
         track_urls = []
-        
+
         for track in track_dict['items']:
             track_url_str = track['track']['uri']
             track_urls.append(track_url_str.removeprefix('spotify:track:'))
@@ -134,14 +134,14 @@ class SpotifyMachine:
         Returns
             Dictionary containing audio features of track corresponding to the track_ID
         """
-        
+
         url = f"https://api.spotify.com/v1/audio-features/{track_id}"
         headers = {'Authorization':self.gen_header()}
 
         r = requests.get(url=url, headers=headers)
-        
+
         return r.json()
-    
+
 
     def gen_genre_df(self, genre):
         """Generate pandas DataFrame containing audio features of 50 songs in specified genre.
@@ -158,25 +158,25 @@ class SpotifyMachine:
             playlist_json = self.search_for_playlist(genre)
         except IndexError:
             playlist_json = self.search_for_playlist(genre.lower())
-        
+
         url = playlist_json['playlists']['items'][0]['tracks']['href']
-        
+
         # Get list of tracks
         track_list = self.get_tracks(url)
-        
+
         # Get list of track urls
         track_urls = self.get_track_urls(track_list)
 
         # Create list of dictionaries which contain audio features for each track
         data = []
-        
+
         for track in track_urls:
             data.append(self.get_track_features(track))
-            
+
         data_df = pd.DataFrame.from_dict(data)
 
         self.__save_data(data_df, genre)
-        
+
         # Convert list of dicts to pandas DataFrame
         return data_df
 
@@ -189,10 +189,5 @@ class SpotifyMachine:
             genre (str) -- genre of the data    
         """
 
-        datapath = f"../data/raw/{genre}.csv"
+        datapath = f"./../data/raw/{genre}.csv"
         data.to_csv(datapath, index=False)
-        
-if __name__ == '__main__':
-    spotify_machine = SpotifyMachine()
-
-    spotify_machine.gen_genre_df('Jazz')
